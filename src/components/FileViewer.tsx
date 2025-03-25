@@ -130,12 +130,25 @@ export function FileViewer({ file, className, onDownload }: FileViewerProps) {
     if (fileType === 'application/pdf' || fileType.endsWith('.pdf')) {
       return (
         <div className="w-full h-[500px] rounded-md animate-scale-in">
-          <iframe 
-            src={file.url}
+          <object 
+            data={file.url}
+            type="application/pdf"
             className="w-full h-full rounded-md border-0"
-            title={file.name}
-            sandbox="allow-same-origin allow-scripts"
-          />
+          >
+            <div className="flex flex-col items-center justify-center p-10">
+              <p className="text-center">
+                Your browser doesn't support embedded PDFs.{' '}
+                <a 
+                  href={file.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-blue-500 hover:underline"
+                >
+                  Open PDF in new tab
+                </a>
+              </p>
+            </div>
+          </object>
         </div>
       );
     }
