@@ -107,26 +107,29 @@ export function FileViewer({ file, className, onDownload }: FileViewerProps) {
     // PDF types
     if (fileType === 'application/pdf' || fileType.endsWith('.pdf')) {
       return (
-        <iframe 
-          src={file.url} 
-          title={file.name}
-          className="w-full h-[500px] rounded-md animate-scale-in" 
-        />
+        <object 
+          data={file.url} 
+          type="application/pdf"
+          className="w-full h-[500px] rounded-md animate-scale-in"
+        >
+          <div className="flex flex-col items-center justify-center p-10">
+            <p>Unable to display PDF. <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Open PDF in new tab</a></p>
+          </div>
+        </object>
       );
     }
     
     // Text types
-    if (fileType.match(/^text\//) || 
-        fileType.endsWith('.txt') || 
-        fileType.endsWith('.md') || 
-        fileType.endsWith('.csv') || 
-        fileType.endsWith('.json')) {
+    if (fileType === 'text/plain' || fileType.endsWith('.txt')) {
       return (
-        <iframe 
-          src={file.url} 
-          title={file.name}
-          className="w-full h-[500px] rounded-md animate-scale-in" 
-        />
+        <div className="w-full h-[500px] bg-white rounded-md p-4 overflow-auto animate-scale-in border border-gray-200">
+          <iframe 
+            src={file.url} 
+            title={file.name}
+            className="w-full h-full border-0" 
+            sandbox="allow-same-origin"
+          />
+        </div>
       );
     }
     
