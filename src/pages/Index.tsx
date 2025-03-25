@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { FileViewer } from "@/components/FileViewer";
 import { FileList } from "@/components/FileList";
-import { Button } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 
