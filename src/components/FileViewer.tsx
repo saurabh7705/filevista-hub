@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Maximize, Minimize } from "lucide-react";
@@ -19,6 +19,28 @@ type FileViewerProps = {
 
 export function FileViewer({ file, className, onDownload }: FileViewerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [textContent, setTextContent] = useState<string | null>(null);
+  
+  // Fetch text content for text files
+  useEffect(() => {
+    const fetchTextContent = async () => {
+      const fileType = file.type.toLowerCase();
+      if (fileType === 'text/plain' || fileType.endsWith('.txt')) {
+        try {
+          const response = await fetch(file.url);
+          const text = await response.text();
+          setTextContent(text);
+        } catch (error) {
+          console.error("Error fetching text content:", error);
+          setTextContent("Error loading text file");
+        }
+      } else {
+        setTextContent(null);
+      }
+    };
+    
+    fetchTextContent();
+  }, [file.url, file.type]);
   
   const toggleFullscreen = () => {
     const element = document.getElementById("file-viewer-container");
@@ -107,28 +129,28 @@ export function FileViewer({ file, className, onDownload }: FileViewerProps) {
     // PDF types
     if (fileType === 'application/pdf' || fileType.endsWith('.pdf')) {
       return (
-        <object 
-          data={file.url} 
-          type="application/pdf"
-          className="w-full h-[500px] rounded-md animate-scale-in"
-        >
-          <div className="flex flex-col items-center justify-center p-10">
-            <p>Unable to display PDF. <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Open PDF in new tab</a></p>
-          </div>
-        </object>
+        <div className="w-full h-[500px] rounded-md animate-scale-in">
+          <iframe 
+            src={file.url}
+            className="w-full h-full rounded-md border-0"
+            title={file.name}
+            sandbox="allow-same-origin allow-scripts"
+          />
+        </div>
       );
     }
     
     // Text types
     if (fileType === 'text/plain' || fileType.endsWith('.txt')) {
       return (
-        <div className="w-full h-[500px] bg-white rounded-md p-4 overflow-auto animate-scale-in border border-gray-200">
-          <iframe 
-            src={file.url} 
-            title={file.name}
-            className="w-full h-full border-0" 
-            sandbox="allow-same-origin"
-          />
+        <div className="w-full h-[500px] bg-white dark:bg-gray-900 rounded-md p-4 overflow-auto animate-scale-in border border-gray-200 dark:border-gray-700">
+          {textContent !== null ? (
+            <pre className="whitespace-pre-wrap font-mono text-sm">{textContent}</pre>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-muted-foreground">Loading text content...</p>
+            </div>
+          )}
         </div>
       );
     }
