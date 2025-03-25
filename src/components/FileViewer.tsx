@@ -115,13 +115,18 @@ export function FileViewer({ file, className, onDownload }: FileViewerProps) {
         fileType.endsWith('.aac') || 
         fileType.endsWith('.flac')) {
       return (
-        <div className="flex flex-col items-center justify-center p-4 animate-scale-in">
+        <div className="flex flex-col items-center justify-center p-4 animate-scale-in w-full">
           <FileIcon type={file.type} size={64} className="mb-4" />
+          <p className="text-lg font-medium mb-4">{file.name}</p>
           <audio 
             src={file.url} 
             controls
-            className="w-full"
-          />
+            className="w-full max-w-md"
+            controlsList="nodownload"
+            preload="metadata"
+          >
+            Your browser does not support the audio element.
+          </audio>
         </div>
       );
     }
